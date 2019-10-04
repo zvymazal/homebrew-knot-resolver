@@ -7,18 +7,18 @@ class KnotResolver < Formula
 
   depends_on "cmocka" => :build
   depends_on "pkg-config" => :build
+  depends_on "meson" => :build
   depends_on "gnutls"
   depends_on "knot"
   depends_on "libuv"
   depends_on "lmdb"
   depends_on "luajit"
   depends_on "nettle"
-  depends_on "meson"
 
   def install
 
     # Meson build
-    system "meson", "build_dir", "--prefix=#{prefix}", "--sysconfdir=#{etc}/kresd", "--default-library=static"
+    system "meson", "build_dir", "--prefix=#{prefix}", "--sysconfdir=#{etc}", "--default-library=static"
     system "ninja", "-C", "build_dir"
     system "ninja", "install", "-C", "build_dir"
 
@@ -61,7 +61,7 @@ class KnotResolver < Formula
       <array>
         <string>#{sbin}/kresd</string>
         <string>-c</string>
-        <string>#{etc}/kresd/config</string>
+        <string>#{etc}/knot-resolver/kresd.conf</string>
         <string>-f</string>
         <string>1</string>
       </array>
