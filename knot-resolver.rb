@@ -13,33 +13,35 @@ class KnotResolver < Formula
   depends_on "lmdb"
   depends_on "luajit"
   depends_on "nettle"
+  depends_on "meson"
 
   def install
+
+    # Meson build
+    system "meson", "build_dir", "--prefix=#{prefix}", "--sysconfdir=#{etc}/kresd", "--default-library=static"
+    system "ninja", "-C", "build_dir"
+    system "ninja", "install", "-C", "build_dir"
+
     # Since we don't run `make install` or `make etc-install`, we need to
     # install root.hints manually before running `make check`.
-    cp "etc/root.hints", buildpath
-    (etc/"kresd").install "root.hints"
+    # cp "etc/root.hints", buildpath
+    # (etc/"kresd").install "root.hints"
+    #
+    # %w[all lib-install daemon-install client-install modules-install
+    #    check].each do |target|
+    #   system "make", target, "PREFIX=#{prefix}", "ETCDIR=#{etc}/kresd"
+    # end
+    #
+    # cp "etc/config.personal", "config"
+    # inreplace "config", /^\s*user\(/, "-- user("
+    # (etc/"kresd").install "config"
 
-    %w[all lib-install daemon-install client-install modules-install
-       check].each do |target|
-      system "make", target, "PREFIX=#{prefix}", "ETCDIR=#{etc}/kresd"
-    end
+    # (etc/"kresd").install "etc/root.hints"
+    # (etc/"kresd").install "etc/icann-ca.pem"
+    #
+    # (buildpath/"root.keys").write(root_keys)
+    # (var/"kresd").install "root.keys"
 
-    cp "etc/config.personal", "config"
-    inreplace "config", /^\s*user\(/, "-- user("
-    (etc/"kresd").install "config"
-
-    (etc/"kresd").install "etc/root.hints"
-    (etc/"kresd").install "etc/icann-ca.pem"
-
-    (buildpath/"root.keys").write(root_keys)
-    (var/"kresd").install "root.keys"
-  end
-
-  # DNSSEC root anchor published by IANA (https://www.iana.org/dnssec/files)
-  def root_keys; <<~EOS
-    . IN DS 20326 8 2 e06d44b80b8f1d39a95c0b0d7c65d08458e880409bbc683457104237c7f8ec8d
-  EOS
   end
 
   plist_options :startup => true
