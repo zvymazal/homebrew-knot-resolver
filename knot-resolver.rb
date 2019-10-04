@@ -8,6 +8,7 @@ class KnotResolver < Formula
   depends_on "cmocka" => :build
   depends_on "pkg-config" => :build
   depends_on "meson" => :build
+  depends_on "ninja" => :build
   depends_on "gnutls"
   depends_on "knot"
   depends_on "libuv"
